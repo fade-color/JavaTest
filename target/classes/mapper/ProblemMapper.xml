@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javatest.mapper.ProblemMapper">
+  <resultMap id="BaseResultMap" type="com.javatest.domain.Problem">
+    <id column="problem_id" jdbcType="INTEGER" property="problemId" />
+    <result column="problem_content" jdbcType="VARCHAR" property="problemContent" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    problem_id, problem_content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from problem
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from problem
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.javatest.domain.Problem">
+    insert into problem (problem_id, problem_content)
+    values (#{problemId,jdbcType=INTEGER}, #{problemContent,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.javatest.domain.Problem">
+    insert into problem
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="problemId != null">
+        problem_id,
+      </if>
+      <if test="problemContent != null">
+        problem_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="problemId != null">
+        #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="problemContent != null">
+        #{problemContent,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.javatest.domain.Problem">
+    update problem
+    <set>
+      <if test="problemContent != null">
+        problem_content = #{problemContent,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.javatest.domain.Problem">
+    update problem
+    set problem_content = #{problemContent,jdbcType=VARCHAR}
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </update>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from problem
+  </select>
+  <select id="selectLast" resultType="java.lang.Integer">
+    select problem_id from problem order by problem_id DESC limit 1
+  </select>
+
+</mapper>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javatest.mapper.RecordMapper">
+  <resultMap id="BaseResultMap" type="com.javatest.domain.Record">
+    <id column="record_id" jdbcType="INTEGER" property="recordId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="problem_id" jdbcType="INTEGER" property="problemId" />
+    <result column="result" jdbcType="INTEGER" property="result" />
+    <result column="run_time" jdbcType="INTEGER" property="runTime" />
+    <result column="submit_time" jdbcType="TIMESTAMP" property="submitTime" />
+  </resultMap>
+  <resultMap id="SubmitResultMap" type="com.javatest.domain.Record">
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="correct_num" jdbcType="INTEGER" property="correctNum" />
+  </resultMap>
+  <resultMap id="SubmitNumResultMap" type="com.javatest.domain.Record">
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="submit_num" jdbcType="INTEGER" property="submitNum" />
+  </resultMap>
+  <resultMap id="SubNumResultMap" type="java.lang.Integer">
+    <result column="submit_num" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="CorNumResultMap" type="java.lang.Integer">
+    <result column="correct_num" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="MyRecordMap" type="com.javatest.domain.Record">
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="result" jdbcType="INTEGER" property="result" />
+    <result column="run_time" jdbcType="INTEGER" property="runTime" />
+    <result column="submit_time" jdbcType="TIMESTAMP" property="submitTime" />
+    <result column="problem_content" jdbcType="VARCHAR" property="problemContent"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    record_id, user_id, problem_id, result, run_time, submit_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from record
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from record
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.javatest.domain.Record">
+    insert into record (record_id, user_id, problem_id, 
+      result, run_time, submit_time
+      )
+    values (#{recordId,jdbcType=INTEGER}, #{userId,jdbcType=VARCHAR}, #{problemId,jdbcType=INTEGER}, 
+      #{result,jdbcType=INTEGER}, #{runTime,jdbcType=INTEGER}, #{submitTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.javatest.domain.Record">
+    insert into record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="recordId != null">
+        record_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="problemId != null">
+        problem_id,
+      </if>
+      <if test="result != null">
+        result,
+      </if>
+      <if test="runTime != null">
+        run_time,
+      </if>
+      <if test="submitTime != null">
+        submit_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="recordId != null">
+        #{recordId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="problemId != null">
+        #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="result != null">
+        #{result,jdbcType=INTEGER},
+      </if>
+      <if test="runTime != null">
+        #{runTime,jdbcType=INTEGER},
+      </if>
+      <if test="submitTime != null">
+        #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.javatest.domain.Record">
+    update record
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="problemId != null">
+        problem_id = #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="result != null">
+        result = #{result,jdbcType=INTEGER},
+      </if>
+      <if test="runTime != null">
+        run_time = #{runTime,jdbcType=INTEGER},
+      </if>
+      <if test="submitTime != null">
+        submit_time = #{submitTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.javatest.domain.Record">
+    update record
+    set user_id = #{userId,jdbcType=VARCHAR},
+      problem_id = #{problemId,jdbcType=INTEGER},
+      result = #{result,jdbcType=INTEGER},
+      run_time = #{runTime,jdbcType=INTEGER},
+      submit_time = #{submitTime,jdbcType=TIMESTAMP}
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+  
+  <select id="selectAllRank" resultMap="SubmitResultMap">
+    SELECT
+        record.user_id,
+        `user`.user_name,
+        COUNT( * ) 'correct_num'
+    FROM
+        record,
+        `user`
+    WHERE
+        record.user_id = `user`.user_id
+        AND record.result = 1
+    GROUP BY
+        record.user_id
+    ORDER BY
+      correct_num DESC
+  </select>
+
+  <select id="selectAllRankBySubmitNum" resultMap="SubmitNumResultMap">
+    SELECT
+        record.user_id,
+        `user`.user_name,
+        COUNT( * ) 'submit_num'
+    FROM
+        record,
+        `user`
+    WHERE
+        record.user_id = `user`.user_id
+    GROUP BY
+        record.user_id
+    ORDER BY
+      submit_num DESC
+  </select>
+  <select id="selectSubmitNum" parameterType="java.lang.String" resultMap="SubNumResultMap">
+    SELECT
+      COUNT( * ) 'submit_num'
+    FROM
+      record
+    WHERE
+      user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectCorrectNumByProblemId" parameterType="java.lang.Integer" resultMap="CorNumResultMap">
+    SELECT
+      COUNT( * ) 'correct_num'
+    FROM
+      record
+    WHERE
+      problem_id = #{problemId,jdbcType=INTEGER}
+      AND result =1
+  </select>
+  <select id="selectSubmitNumByProblemId" parameterType="java.lang.Integer" resultMap="SubNumResultMap">
+    SELECT
+      COUNT( * ) 'submit_num'
+    FROM
+      record
+    WHERE
+      problem_id = #{problemId,jdbcType=INTEGER}
+  </select>
+  <select id="selectAllStatus" resultMap="BaseResultMap">
+    select * from record ;
+  </select>
+  <select id="selectByUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select * from record where user_id = #{userId,jdbcType=VARCHAR}
+  </select>
+  <select id="selectMyRecord" resultMap="MyRecordMap">
+    SELECT
+        user_id,result,run_time,submit_time,problem_content
+    FROM
+        record,problem
+    WHERE
+        record.problem_id = problem.problem_id
+  </select>
+</mapper>

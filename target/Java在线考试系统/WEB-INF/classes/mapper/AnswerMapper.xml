@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javatest.mapper.AnswerMapper">
+  <resultMap id="BaseResultMap" type="com.javatest.domain.Answer">
+    <id column="problem_id" jdbcType="INTEGER" property="problemId" />
+    <result column="problem_answer" jdbcType="VARCHAR" property="problemAnswer" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    problem_id, problem_answer
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from answer
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from answer
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.javatest.domain.Answer">
+    insert into answer (problem_id, problem_answer)
+    values (#{problemId,jdbcType=INTEGER}, #{problemAnswer,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.javatest.domain.Answer">
+    insert into answer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="problemId != null">
+        problem_id,
+      </if>
+      <if test="problemAnswer != null">
+        problem_answer,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="problemId != null">
+        #{problemId,jdbcType=INTEGER},
+      </if>
+      <if test="problemAnswer != null">
+        #{problemAnswer,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.javatest.domain.Answer">
+    update answer
+    <set>
+      <if test="problemAnswer != null">
+        problem_answer = #{problemAnswer,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.javatest.domain.Answer">
+    update answer
+    set problem_answer = #{problemAnswer,jdbcType=VARCHAR}
+    where problem_id = #{problemId,jdbcType=INTEGER}
+  </update>
+</mapper>
